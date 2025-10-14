@@ -1,3 +1,6 @@
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <GL/glut.h>
@@ -206,7 +209,7 @@ int main(int argc, char **argv)
     const int num_nodes = 20;
     tree = R1Tree::generateRandomTree(num_nodes);
     // tree = R1Tree::loadTreeFromFile("tree.txt");
-    
+
     // tree = new R1Tree(num_nodes);
     // tree->addEdge(0, 1);
     // tree->addEdge(1, 2);
@@ -227,7 +230,7 @@ int main(int argc, char **argv)
     // tree->addEdge(9, 17);
     // tree->addEdge(10, 18);
     // tree->addEdge(11, 19);
-    
+
     animator = new Animator();
 
     std::cout << "Controls:\n"
@@ -270,8 +273,80 @@ int main(int argc, char **argv)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+    ImGui::StyleColorsDark();
+    ImGuiStyle &style = ImGui::GetStyle();
+
+    float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()) * 1.25f;
+    style.ScaleAllSizes(main_scale);
+    style.FontScaleDpi = main_scale;
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    const char *glsl_version = "#version 130";
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    bool show_demo_window = true;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
     while (!glfwWindowShouldClose(window))
     {
+        if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
+        {
+            ImGui_ImplGlfw_Sleep(10);
+            continue;
+        }
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        {
+            ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+            ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+            static int ui_num_nodes = tree->getNumVertices();
+
+            ImGui::Begin("Edit Tree", NULL, ImGuiWindowFlags_NoCollapse);
+
+            ImGui::Text("Nodes:"); 
+            ImGui::SameLine();
+            ImGui::InputInt("##Nodes", &ui_num_nodes);
+
+            ImGui::Text("Edges:"); 
+            char buffer[1024 * 16];                   
+            ImGui::InputTextMultiline(" ", buffer, IM_ARRAYSIZE(buffer), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 8));
+
+            if (ImGui::Button("Update"))
+            {
+                // TODO
+            }
+
+            ImGui::SameLine();
+            
+            if (ImGui::Button("Random"))
+            {
+                currentState = AppState::IDLE;
+                animator = new Animator();
+                delete tree;
+                tree = R1Tree::generateRandomTree(ui_num_nodes);
+                tree->calculateTrueCenterLayout();
+                tree->current_positions = tree->getTargetPositions();
+                hoveredNodeID = -1;
+                cameraX = 0.0f;
+                cameraY = 0.0f;
+                // TODO: update textarea with new edges
+            }
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
+        }
+
         if (currentState == AppState::ANIMATING_LAYOUT)
         {
             animator->update(tree->current_positions);
@@ -301,6 +376,9 @@ int main(int argc, char **argv)
         }
 
         display();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         if (tree && hoveredNodeID != -1 && currentState == AppState::IDLE)
         {

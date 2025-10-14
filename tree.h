@@ -45,6 +45,7 @@ public:
         adj[v].push_back(u);
     }
 
+    const int getNumVertices() const { return num_vertices; }
     const std::vector<Point> &getCurrentPositions() const { return current_positions; }
     const std::vector<Point> &getTargetPositions() const { return target_positions; }
     const std::vector<int> &getDepths() const { return depths; }
