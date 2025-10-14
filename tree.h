@@ -2,6 +2,7 @@
 
 #include "graphics.h"
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <numeric>
 #include <algorithm>
@@ -257,6 +258,83 @@ public:
     }
 
     std::vector<Point> current_positions;
+
+    static R1Tree *generateRandomTree(int n)
+    {
+        std::cout << "Generating random tree with " << n << " nodes:" << std::endl;
+        srand(static_cast<unsigned int>(time(0)));
+        R1Tree *tree = new R1Tree(n);
+
+        std::vector<int> prufer(n - 2);
+        for (int i = 0; i < n - 2; i++)
+        {
+            prufer[i] = 1 + (rand() % n);
+        }
+
+        std::vector<int> nodes(n, 0);
+        for (int p : prufer)
+        {
+            nodes[p - 1]++;
+        }
+
+        int j = 0;
+        for (int i = 0; i < n - 2; i++)
+        {
+            for (j = 0; j < n; j++)
+            {
+                if (nodes[j] == 0)
+                {
+                    nodes[j] = -1;
+                    std::cout << j << " " << prufer[i] - 1 << std::endl;
+                    tree->addEdge(j, prufer[i] - 1);
+                    nodes[prufer[i] - 1]--;
+                    break;
+                }
+            }
+        }
+        int k = 0;
+        j = 0;
+
+        for (int i = 0; i < n; i++)
+        {
+            if (nodes[i] == 0)
+            {
+                if (k == 0)
+                {
+                    j = i;
+                    k++;
+                }
+                else if (k == 1)
+                {
+                    std::cout << j << " " << i << std::endl;
+                    tree->addEdge(j, i);
+                    break;
+                }
+            }
+        }
+        std::cout << std::endl;
+        return tree;
+    }
+
+    static R1Tree *loadTreeFromFile(const std::string &filename)
+    {
+        std::ifstream infile(filename);
+        if (!infile)
+        {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            return nullptr;
+        }
+        int n;
+        infile >> n;
+        R1Tree *tree = new R1Tree(n);
+        int u, v;
+        while (infile >> u >> v)
+        {
+            tree->addEdge(u, v);
+        }
+        infile.close();
+        return tree;
+    }
 
 private:
     float DELTA;

@@ -204,28 +204,31 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
 
     const int num_nodes = 20;
-    tree = new R1Tree(num_nodes);
+    tree = R1Tree::generateRandomTree(num_nodes);
+    // tree = R1Tree::loadTreeFromFile("tree.txt");
+    
+    // tree = new R1Tree(num_nodes);
+    // tree->addEdge(0, 1);
+    // tree->addEdge(1, 2);
+    // tree->addEdge(1, 3);
+    // tree->addEdge(2, 4);
+    // tree->addEdge(2, 5);
+    // tree->addEdge(3, 6);
+    // tree->addEdge(3, 7);
+    // tree->addEdge(4, 8);
+    // tree->addEdge(4, 9);
+    // tree->addEdge(5, 10);
+    // tree->addEdge(5, 11);
+    // tree->addEdge(6, 12);
+    // tree->addEdge(6, 13);
+    // tree->addEdge(7, 14);
+    // tree->addEdge(7, 15);
+    // tree->addEdge(8, 16);
+    // tree->addEdge(9, 17);
+    // tree->addEdge(10, 18);
+    // tree->addEdge(11, 19);
+    
     animator = new Animator();
-
-    tree->addEdge(0, 1);
-    tree->addEdge(1, 2);
-    tree->addEdge(1, 3);
-    tree->addEdge(2, 4);
-    tree->addEdge(2, 5);
-    tree->addEdge(3, 6);
-    tree->addEdge(3, 7);
-    tree->addEdge(4, 8);
-    tree->addEdge(4, 9);
-    tree->addEdge(5, 10);
-    tree->addEdge(5, 11);
-    tree->addEdge(6, 12);
-    tree->addEdge(6, 13);
-    tree->addEdge(7, 14);
-    tree->addEdge(7, 15);
-    tree->addEdge(8, 16);
-    tree->addEdge(9, 17);
-    tree->addEdge(10, 18);
-    tree->addEdge(11, 19);
 
     std::cout << "Controls:\n"
               << " - Left-Click a node to re-root.\n"
