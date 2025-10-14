@@ -74,7 +74,8 @@ public:
         {
             int root = center_nodes[0];
             computeWidthsAndDepths(root, -1, 0);
-            drawSubTree(root, -1, 0.0f, 0.0f, 2 * M_PI);
+            target_positions[root] = {0.0f, 0.0f};
+            drawSubTree(root, -1, 0.0f, 2 * M_PI);
         }
         else if (center_nodes.size() == 2)
         {
@@ -86,8 +87,9 @@ public:
             parent_map[u] = v;
             computeWidthsAndDepths(u, v, 0);
             computeWidthsAndDepths(v, u, 0);
-            drawSubTree(u, v, DELTA / 2.0f, 3 * M_PI / 2.0, M_PI / 2.0);
-            drawSubTree(v, u, DELTA / 2.0f, M_PI / 2.0, 3 * M_PI / 2.0);
+
+            drawSubTree(u, v, 3 * M_PI / 2.0, M_PI / 2.0);
+            drawSubTree(v, u, M_PI / 2.0, 3 * M_PI / 2.0);
         }
         finalizeLayout();
     }
@@ -98,7 +100,9 @@ public:
         center_nodes.clear();
         center_nodes.push_back(rootID);
         computeWidthsAndDepths(rootID, -1, 0);
-        drawSubTree(rootID, -1, 0.0f, 0.0f, 2 * M_PI);
+
+        target_positions[rootID] = {0.0f, 0.0f};
+        drawSubTree(rootID, -1, 0.0f, 2 * M_PI);
         finalizeLayout();
     }
 
@@ -367,48 +371,43 @@ private:
         widths[u] = is_leaf ? 1 : leaf_count;
     }
 
-    void drawSubTree(int u, int p, float rho, float alpha1, float alpha2)
+    void drawSubTree(int u, int p, float alpha1, float alpha2)
     {
-        float angle = (alpha1 + alpha2) / 2.0f;
         float current_radius;
-
         if (center_nodes.size() == 1)
         {
-            target_positions[u] = {0, 0};
-            current_radius = rho;
+            current_radius = static_cast<float>(depths[u] + 1.0f) * DELTA;
         }
         else
         {
-            current_radius = rho + (depths[u] * DELTA);
+            current_radius = (static_cast<float>(depths[u]) + 0.5f) * DELTA;
         }
 
-        if (p != -1 && center_nodes.size() == 1)
+        if (p != -1)
         {
-            current_radius = rho + DELTA;
-            target_positions[u] = {static_cast<float>(current_radius * cosf(angle)), static_cast<float>(current_radius * sinf(angle))};
-        }
-        else if (p != -1 && center_nodes.size() == 2)
-        {
-            target_positions[u] = {static_cast<float>(current_radius * cosf(angle)), static_cast<float>(current_radius * sinf(angle))};
+            float angle = (alpha1 + alpha2) / 2.0f;
+            target_positions[u] = {
+                static_cast<float>(current_radius * cosf(angle)),
+                static_cast<float>(current_radius * sinf(angle))};
         }
 
         framework_circles.insert(current_radius);
 
-        if (current_radius + DELTA <= 0)
+        float tau_rho = 0.0f;
+        if (current_radius + DELTA > 0)
         {
-            return;
+            float acos_arg = std::min(1.0f, current_radius / (current_radius + DELTA));
+            tau_rho = 2.0f * acosf(acos_arg);
         }
-        float acos_arg = current_radius / (current_radius + DELTA);
-        acos_arg = std::min(1.0f, acos_arg);
-        float tau_rho = 2 * acosf(acos_arg);
 
         float total_angle;
         float start_alpha;
+        float angle_center = (alpha1 + alpha2) / 2.0f;
 
         if (tau_rho < (alpha2 - alpha1))
         {
             total_angle = tau_rho;
-            start_alpha = angle - (tau_rho / 2.0f);
+            start_alpha = angle_center - (tau_rho / 2.0f);
         }
         else
         {
@@ -428,7 +427,7 @@ private:
                 Point parent_pos_local = target_positions[u];
                 framework_wedges.push_back({parent_pos_local, current_radius + DELTA, current_alpha, current_alpha + wedge_angle});
 
-                drawSubTree(v, u, current_radius, current_alpha, current_alpha + wedge_angle);
+                drawSubTree(v, u, current_alpha, current_alpha + wedge_angle);
                 current_alpha += wedge_angle;
             }
         }
