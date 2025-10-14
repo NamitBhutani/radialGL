@@ -90,7 +90,7 @@ public:
             computeWidthsAndDepths(v, u, 0);
 
             drawSubTree(u, v, 3 * M_PI / 2.0, M_PI / 2.0);
-            drawSubTree(v, u, M_PI / 2.0, 3 * M_PI / 2.0);
+            drawSubTree(v, u, M_PI / 2.0, -M_PI / 2.0);
         }
         finalizeLayout();
     }
