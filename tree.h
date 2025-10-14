@@ -99,6 +99,7 @@ public:
         resetLayoutState();
         center_nodes.clear();
         center_nodes.push_back(rootID);
+        true_center_nodes = center_nodes;
         computeWidthsAndDepths(rootID, -1, 0);
 
         target_positions[rootID] = {0.0f, 0.0f};
