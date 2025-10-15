@@ -7,7 +7,7 @@ TreeRenderer::TreeRenderer(const Tree &tree, const TreeLayout &layout)
 
 void TreeRenderer::drawFramework(const std::vector<Point> &positions)
 {
-    Point screenCenter = {400.0f, 300.0f};
+    Point screenCenter = {layout_ref.getHalfWidth(), layout_ref.getHalfHeight()};
     // first draw all the concentric circles
     for (float radius : layout_ref.getFrameworkCircles())
     {

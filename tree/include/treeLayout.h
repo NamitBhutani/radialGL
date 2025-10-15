@@ -17,7 +17,7 @@ struct Wedge
 class TreeLayout
 {
 public:
-    TreeLayout(const Tree &tree);
+    TreeLayout(const Tree &tree, const int halfwidth, const int halfheight);
 
     void calculateLayoutFromRoot(int rootID);
     void calculateTrueCenterLayout();
@@ -25,6 +25,9 @@ public:
 
     void setDelta(float newDelta);
     float getDelta() const;
+
+    int getHalfWidth() const;
+    int getHalfHeight() const;
 
     const std::vector<Point> &getTargetPositions() const;
     const std::vector<int> &getCenterNodes() const;
@@ -45,6 +48,7 @@ private:
 
     const Tree &tree_ref;
     float DELTA;
+    int halfwidth, halfheight;
 
     std::vector<Point> target_positions;
     std::vector<int> center_nodes, true_center_nodes;

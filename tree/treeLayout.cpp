@@ -4,10 +4,10 @@
 #include <cmath>
 #include <iostream>
 
-TreeLayout::TreeLayout(const Tree &tree) : tree_ref(tree), DELTA(50.0f)
+TreeLayout::TreeLayout(const Tree &tree, const int halfwidth, const int halfheight) : tree_ref(tree), DELTA(50.0f), halfwidth(halfwidth), halfheight(halfheight)
 {
     int n = tree.getNumVertices();
-    target_positions.resize(n, {400, 300});
+    target_positions.resize(n, {static_cast<float>(halfwidth), static_cast<float>(halfheight)});
     widths.resize(n, 0);
     depths.resize(n, 0);
     parent_map.resize(n, -1);
@@ -36,8 +36,8 @@ void TreeLayout::finalizeLayout()
     // shifts the whole tree to the center of the screen
     for (size_t i = 0; i < target_positions.size(); ++i)
     {
-        target_positions[i].x += 400;
-        target_positions[i].y += 300;
+        target_positions[i].x += halfwidth;
+        target_positions[i].y += halfheight;
     }
 }
 
@@ -86,6 +86,8 @@ void TreeLayout::calculateLayoutFromRoot(int rootID)
 }
 
 float TreeLayout::getDelta() const { return DELTA; }
+int TreeLayout::getHalfWidth() const { return halfwidth; }
+int TreeLayout::getHalfHeight() const { return halfheight; }
 const std::vector<Point> &TreeLayout::getTargetPositions() const { return target_positions; }
 const std::vector<int> &TreeLayout::getCenterNodes() const { return true_center_nodes; }
 const std::vector<int> &TreeLayout::getDepths() const { return depths; }

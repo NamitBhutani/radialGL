@@ -224,22 +224,6 @@ int main(int argc, char **argv)
 
     glutInit(&argc, argv);
 
-    // create a random tree
-    const int num_nodes = 20;
-    tree = new Tree(Tree::generateRandom(num_nodes));
-    layout = new TreeLayout(*tree);
-    renderer = new TreeRenderer(*tree, *layout);
-    animator = new Animator();
-
-    // initial layout calculation
-    layout->calculateTrueCenterLayout();
-    // set up the initial animation
-    const auto &end_pos = layout->getTargetPositions();
-    // start all nodes from the center of the screen for explode effect
-    current_positions.assign(tree->getNumVertices(), {400, 300});
-    animator->startAnimation(current_positions, end_pos);
-    currentState = AppState::ANIMATING_LAYOUT;
-
     if (!glfwInit())
         return -1;
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
@@ -250,6 +234,26 @@ int main(int argc, char **argv)
         glfwTerminate();
         return -1;
     }
+
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+
+    // create a random tree
+    const int num_nodes = 20;
+    tree = new Tree(Tree::generateRandom(num_nodes));
+    layout = new TreeLayout(*tree, width / 2, height / 2);
+    renderer = new TreeRenderer(*tree, *layout);
+    animator = new Animator();
+
+    // initial layout calculation
+    layout->calculateTrueCenterLayout();
+    // set up the initial animation
+    const auto &end_pos = layout->getTargetPositions();
+
+    // start all nodes from the center of the screen for explode effect
+    current_positions.assign(tree->getNumVertices(), {width / 2.0f, height / 2.0f});
+    animator->startAnimation(current_positions, end_pos);
+    currentState = AppState::ANIMATING_LAYOUT;
 
     glfwMakeContextCurrent(window);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -315,8 +319,11 @@ int main(int argc, char **argv)
     // lambda to update the tree, layout, renderer and animator when the tree changes
     auto updateTree = [&](const Tree &new_tree)
     {
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+
         Tree *new_tree_ptr = new Tree(new_tree);
-        TreeLayout *new_layout_ptr = new TreeLayout(*new_tree_ptr);
+        TreeLayout *new_layout_ptr = new TreeLayout(*new_tree_ptr, width / 2, height / 2);
         TreeRenderer *new_renderer_ptr = new TreeRenderer(*new_tree_ptr, *new_layout_ptr);
 
         new_layout_ptr->calculateTrueCenterLayout();
@@ -334,7 +341,7 @@ int main(int argc, char **argv)
         // create a new animator and start the transition
         delete animator;
         animator = new Animator();
-        current_positions.assign(tree->getNumVertices(), {400, 300});
+        current_positions.assign(tree->getNumVertices(), {width / 2.0f, height / 2.0f});
         animator->startAnimation(current_positions, end_pos);
         currentState = AppState::ANIMATING_LAYOUT;
         hoveredNodeID = -1;
