@@ -4,6 +4,7 @@
 #include <vector>
 #include <ctime>
 #include <cstdlib>
+#include <chrono>
 
 Tree::Tree(int n) : num_vertices(n), adj(n) {}
 
@@ -62,6 +63,7 @@ Tree Tree::loadFromFile(const std::string &filename)
 
 Tree Tree::generateRandom(int n)
 {
+    auto start = std::chrono::high_resolution_clock::now();
     // seed the random generator so we dont get the same tree every time
     srand(static_cast<unsigned int>(time(0)));
     Tree tree(n);
@@ -114,5 +116,8 @@ Tree Tree::generateRandom(int n)
             }
         }
     }
+    auto end = std::chrono::high_resolution_clock::now();
+    double millis = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / 1e6;
+    std::cout << "Random tree generation took " << millis << " ms" << std::endl;
     return tree;
 }

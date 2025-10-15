@@ -12,6 +12,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <chrono>
 
 Tree *tree = nullptr;
 TreeLayout *layout = nullptr;
@@ -52,8 +53,12 @@ void display()
     if (tree && layout && renderer)
     {
         DrawState state = (currentState == AppState::ANIMATING_FIND_CENTER) ? DrawState::ANIMATING_FIND_CENTER : DrawState::NORMAL;
+        auto start = std::chrono::high_resolution_clock::now();
         // draw the tree
         renderer->draw(current_positions, hoveredNodeID, showFramework, state, findCenter_step);
+        auto end = std::chrono::high_resolution_clock::now();
+        double millis = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / 1e6;
+        // std::cout << "Draw call took " << millis << " ms" << std::endl;
     }
 }
 
@@ -216,6 +221,8 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
 int main(int argc, char **argv)
 {
+    auto full_start = std::chrono::high_resolution_clock::now();
+    
     glutInit(&argc, argv);
     // create a random tree
     const int num_nodes = 20;
@@ -297,6 +304,9 @@ int main(int argc, char **argv)
         edgeListBuffer[edges_str.size()] = '\0';
     };
     updateEdgeListBuffer();
+
+    bool firstFrame = true;
+
 
     // main loop
     while (!glfwWindowShouldClose(window))
@@ -531,6 +541,13 @@ int main(int argc, char **argv)
         glfwSwapBuffers(window);
         // check for any new events like mouse clicks or key presses
         glfwPollEvents();
+        if (firstFrame)
+        {
+            firstFrame = false;
+            auto full_end = std::chrono::high_resolution_clock::now();
+            double full_millis = std::chrono::duration_cast<std::chrono::nanoseconds>(full_end - full_start).count() / 1e6;
+            std::cout << "Total time to first frame: " << full_millis << " ms" << std::endl;
+        }
     }
     // clean up
     delete tree;
