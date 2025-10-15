@@ -225,7 +225,13 @@ int main(int argc, char **argv)
     animator = new Animator();
     // initial layout calculation
     layout->calculateTrueCenterLayout();
-    current_positions = layout->getTargetPositions();
+    // set up the initial animation
+    const auto &end_pos = layout->getTargetPositions();
+    // start all nodes from the center of the screen for explode effect
+    current_positions.assign(tree->getNumVertices(), {400, 300});
+    animator->startAnimation(current_positions, end_pos);
+    currentState = AppState::ANIMATING_LAYOUT;
+
     if (!glfwInit())
         return -1;
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
@@ -347,7 +353,7 @@ int main(int argc, char **argv)
                 // create a new animator and start the transition
                 delete animator;
                 animator = new Animator();
-                current_positions.assign(tree->getNumVertices(), {0, 0});
+                current_positions.assign(tree->getNumVertices(), {400, 300});
                 animator->startAnimation(current_positions, end_pos);
                 currentState = AppState::ANIMATING_LAYOUT;
                 hoveredNodeID = -1;
@@ -373,7 +379,7 @@ int main(int argc, char **argv)
 
                 delete animator;
                 animator = new Animator();
-                current_positions.assign(tree->getNumVertices(), {0, 0});
+                current_positions.assign(tree->getNumVertices(), {400, 300});
                 animator->startAnimation(current_positions, end_pos);
                 currentState = AppState::ANIMATING_LAYOUT;
                 hoveredNodeID = -1;
@@ -408,7 +414,7 @@ int main(int argc, char **argv)
 
                     delete animator;
                     animator = new Animator();
-                    current_positions.assign(tree->getNumVertices(), {0, 0});
+                    current_positions.assign(tree->getNumVertices(), {400, 300});
                     animator->startAnimation(current_positions, end_pos);
                     currentState = AppState::ANIMATING_LAYOUT;
                     hoveredNodeID = -1;
