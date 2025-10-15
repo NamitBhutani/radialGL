@@ -11,14 +11,15 @@ struct Point
 
 namespace Drawing
 {
-    void drawPixel(int x, int y)
+    inline void drawPixel(int x, int y)
     {
         glBegin(GL_POINTS);
         glVertex2i(x, y);
         glEnd();
     }
 
-    void drawCircleOutline(Point center, int radius)
+    // basic midpoint circle algorithm
+    inline void drawCircleOutline(Point center, int radius)
     {
         int x = radius;
         int y = 0;
@@ -26,6 +27,7 @@ namespace Drawing
 
         while (x >= y)
         {
+            // only calculate one octant and then mirror it eight times
             drawPixel(center.x + x, center.y + y);
             drawPixel(center.x + y, center.y + x);
             drawPixel(center.x - y, center.y + x);
@@ -48,7 +50,8 @@ namespace Drawing
         }
     }
 
-    void drawFilledCircle(Point center, int radius)
+    // draws a solid, filled in circle
+    inline void drawFilledCircle(Point center, int radius)
     {
         int x = radius;
         int y = 0;
@@ -56,6 +59,7 @@ namespace Drawing
 
         while (x >= y)
         {
+            // this is similar to the outline but we also fill the inside
             drawPixel(center.x - x, center.y - y);
             drawPixel(center.x + x, center.y - y);
 
@@ -68,7 +72,7 @@ namespace Drawing
             drawPixel(center.x - y, center.y + x);
             drawPixel(center.x + y, center.y + x);
 
-            // fill circle
+            // fill in the circle for pretty nodes
             for (int tx = -x + 1; tx <= x - 1; tx++)
             {
                 drawPixel(center.x + tx, center.y - y);
@@ -86,7 +90,7 @@ namespace Drawing
             {
                 d += 2 * y + 1;
             }
-            if (d > 0)
+            else if (d > 0)
             {
                 x--;
                 d -= 2 * x + 1;
@@ -94,7 +98,8 @@ namespace Drawing
         }
     }
 
-    void drawLine(Point p1, Point p2)
+    // draws a line between two points using bresenham's algorithm
+    inline void drawLine(Point p1, Point p2)
     {
         int x1 = static_cast<int>(p1.x);
         int y1 = static_cast<int>(p1.y);
@@ -104,6 +109,7 @@ namespace Drawing
         int dx = x2 - x1;
         int dy = y2 - y1;
 
+        // to handle steep lines by swapping x and y
         bool is_steep = abs(dy) > abs(dx);
 
         if (is_steep)
@@ -112,6 +118,7 @@ namespace Drawing
             std::swap(x2, y2);
         }
 
+        // makes sure we always draw from left to right
         if (x1 > x2)
         {
             std::swap(x1, x2);
@@ -126,6 +133,7 @@ namespace Drawing
 
         for (int x = x1; x <= x2; x++)
         {
+            // swap back if it was a steep line
             if (is_steep)
             {
                 drawPixel(y, x);
@@ -142,5 +150,4 @@ namespace Drawing
             }
         }
     }
-
 }
