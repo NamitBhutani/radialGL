@@ -18,7 +18,7 @@ namespace Drawing
         glEnd();
     }
 
-    void drawCircle(Point center, int radius)
+    void drawFilledCircle(Point center, int radius)
     {
         int x = radius;
         int y = 0;
@@ -26,14 +26,30 @@ namespace Drawing
 
         while (x >= y)
         {
-            drawPixel(center.x + x, center.y + y);
-            drawPixel(center.x + y, center.y + x);
-            drawPixel(center.x - y, center.y + x);
-            drawPixel(center.x - x, center.y + y);
             drawPixel(center.x - x, center.y - y);
+            drawPixel(center.x + x, center.y - y);
+
+            drawPixel(center.x - x, center.y + y);
+            drawPixel(center.x + x, center.y + y);
+
             drawPixel(center.x - y, center.y - x);
             drawPixel(center.x + y, center.y - x);
-            drawPixel(center.x + x, center.y - y);
+
+            drawPixel(center.x - y, center.y + x);
+            drawPixel(center.x + y, center.y + x);
+
+            // fill circle
+            for (int tx = -x + 1; tx <= x - 1; tx++)
+            {
+                drawPixel(center.x + tx, center.y - y);
+                drawPixel(center.x + tx, center.y + y);
+            }
+
+            for (int ty = -y + 1; ty <= y - 1; ty++)
+            {
+                drawPixel(center.x + ty, center.y - x);
+                drawPixel(center.x + ty, center.y + x);
+            }
 
             y++;
             if (d <= 0)

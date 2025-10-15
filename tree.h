@@ -169,7 +169,7 @@ public:
             for (float radius : framework_circles)
             {
                 glColor3f(0.2f, 0.2f, 0.3f);
-                Drawing::drawCircle(screenCenter, radius);
+                Drawing::drawFilledCircle(screenCenter, radius);
             }
             for (const auto &wedge : framework_wedges)
             {
@@ -215,7 +215,7 @@ public:
                 {
                     glColor3f(1.0f, 1.0f, 0.0f);
                 }
-                Drawing::drawCircle(current_positions[i], 6);
+                Drawing::drawFilledCircle(current_positions[i], 6);
             }
             if (animationStep >= pruning_generations.size())
             {
@@ -224,7 +224,7 @@ public:
                     for (int center_id : pruning_generations.back())
                     {
                         glColor3f(1.0f, 1.0f, 1.0f);
-                        Drawing::drawCircle(current_positions[center_id], 9);
+                        Drawing::drawFilledCircle(current_positions[center_id], 9);
                     }
                 }
             }
@@ -253,7 +253,7 @@ public:
                 if (isTrueCentralNode)
                 {
                     glColor3f(1.0f, 1.0f, 1.0f);
-                    Drawing::drawCircle(current_positions[i], 9);
+                    Drawing::drawFilledCircle(current_positions[i], 9);
                 }
                 else
                 {
@@ -264,7 +264,7 @@ public:
                     node_color.g = start_color.g * (1.0f - t) + end_color.g * t;
                     node_color.b = start_color.b * (1.0f - t) + end_color.b * t;
                     glColor3f(node_color.r, node_color.g, node_color.b);
-                    Drawing::drawCircle(current_positions[i], 7);
+                    Drawing::drawFilledCircle(current_positions[i], 7);
                 }
             }
             if (hoveredNodeID != -1)
@@ -391,7 +391,7 @@ private:
     void highlightSubtree(int u)
     {
         glColor3f(1.0f, 0.5f, 0.0f);
-        Drawing::drawCircle(current_positions[u], 8);
+        Drawing::drawFilledCircle(current_positions[u], 8);
         for (int v : adj[u])
         {
             if (parent_map[v] == u)
