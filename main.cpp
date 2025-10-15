@@ -18,8 +18,6 @@ bool isPanning = false;
 double lastMouseX = 0.0, lastMouseY = 0.0;
 float cameraX = 0.0f, cameraY = 0.0f;
 
-GLuint spotlightShaderProgram;
-GLint mousePosLocation;
 enum class AppState
 {
     IDLE,
@@ -40,7 +38,6 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
     glTranslatef(cameraX, cameraY, 0.0f);
     if (tree)
     {
@@ -197,87 +194,18 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     const auto &io = ImGui::GetIO();
     if (io.WantCaptureKeyboard)
         return;
-
-    if (key == GLFW_KEY_R && animator && !animator->isAnimating() && currentState == AppState::IDLE)
-    {
-        currentState = AppState::ANIMATING_LAYOUT;
-        std::cout << "Resetting tree to true center." << std::endl;
-        const auto &start_pos = tree->getCurrentPositions();
-        tree->calculateTrueCenterLayout();
-        const auto &end_pos = tree->getTargetPositions();
-        animator->startAnimation(start_pos, end_pos);
-    }
-    else if (key == GLFW_KEY_B && currentState == AppState::IDLE)
-    {
-        showFramework = !showFramework;
-        std::cout << "Blueprint view " << (showFramework ? "ON" : "OFF") << "." << std::endl;
-    }
-    else if (key == GLFW_KEY_F && animator && !animator->isAnimating())
-    {
-        if (currentState == AppState::ANIMATING_FIND_CENTER)
-        {
-            currentState = AppState::IDLE;
-            std::cout << "findCenter animation stopped." << std::endl;
-        }
-        else
-        {
-            std::cout << "Starting findCenter animation..." << std::endl;
-            currentState = AppState::ANIMATING_FIND_CENTER;
-            tree->prepareFindCenterAnimation();
-            findCenter_step = 0;
-            findCenter_last_step_time = glfwGetTime();
-
-            animator->startAnimation(tree->current_positions, tree->getTargetPositions());
-        }
-    }
 }
 
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
-
     const int num_nodes = 20;
     tree = R1Tree::generateRandomTree(num_nodes);
-    // tree = R1Tree::loadTreeFromFile("tree.txt");
-
-    // tree = new R1Tree(num_nodes);
-    // tree->addEdge(0, 1);
-    // tree->addEdge(1, 2);
-    // tree->addEdge(1, 3);
-    // tree->addEdge(2, 4);
-    // tree->addEdge(2, 5);
-    // tree->addEdge(3, 6);
-    // tree->addEdge(3, 7);
-    // tree->addEdge(4, 8);
-    // tree->addEdge(4, 9);
-    // tree->addEdge(5, 10);
-    // tree->addEdge(5, 11);
-    // tree->addEdge(6, 12);
-    // tree->addEdge(6, 13);
-    // tree->addEdge(7, 14);
-    // tree->addEdge(7, 15);
-    // tree->addEdge(8, 16);
-    // tree->addEdge(9, 17);
-    // tree->addEdge(10, 18);
-    // tree->addEdge(11, 19);
-
     animator = new Animator();
-
-    std::cout << "Controls:\n"
-              << " - Left-Click a node to re-root.\n"
-              << " - Right-Click and Drag to Pan.\n"
-              << " - Press 'R' to reset.\n"
-              << " - Scroll to change spacing.\n"
-              << " - Press 'E' to edit the tree.\n"
-              << " - Press 'F' to animate finding the center.\n"
-              << " - Press 'B' to toggle the blueprint view." << std::endl;
-
     tree->calculateTrueCenterLayout();
     tree->current_positions = tree->getTargetPositions();
-
     if (!glfwInit())
         return -1;
-
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     GLFWwindow *window = glfwCreateWindow(800, 600, "R1 Free Tree - Interactive", NULL, NULL);
@@ -297,39 +225,30 @@ int main(int argc, char **argv)
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetKeyCallback(window, key_callback);
-
     framebuffer_size_callback(window, 800, 600);
     glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
-    // enable antialiasing
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_POINT_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-
     ImGui::StyleColorsDark();
     ImGuiStyle &style = ImGui::GetStyle();
-
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()) * 1.25f;
     style.ScaleAllSizes(main_scale);
     style.FontScaleDpi = main_scale;
-
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     const char *glsl_version = "#version 130";
     ImGui_ImplOpenGL3_Init(glsl_version);
-
     bool show_demo_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
     char edgeListBuffer[1024 * 16];
     auto updateEdgeListBuffer = [&]()
     {
@@ -343,7 +262,6 @@ int main(int argc, char **argv)
         edgeListBuffer[edges_str.size()] = '\0';
     };
     updateEdgeListBuffer();
-
     while (!glfwWindowShouldClose(window))
     {
         if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
@@ -351,26 +269,18 @@ int main(int argc, char **argv)
             ImGui_ImplGlfw_Sleep(10);
             continue;
         }
-
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
         if (show_tree_window)
         {
-            ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-            ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-            ImGui::Begin("Edit Tree", &show_tree_window, ImGuiWindowFlags_NoCollapse);
-
+            ImGui::Begin("Controls & Editor", &show_tree_window, ImGuiWindowFlags_NoCollapse);
             static int ui_num_nodes = tree->getNumVertices();
             ImGui::Text("Nodes:");
             ImGui::SameLine();
             ImGui::InputInt("##Nodes", &ui_num_nodes);
-
             ImGui::Text("Edges:");
             ImGui::InputTextMultiline("##Edges", edgeListBuffer, IM_ARRAYSIZE(edgeListBuffer), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 8));
-
             if (ImGui::Button("Update"))
             {
                 R1Tree *new_tree = new R1Tree(ui_num_nodes);
@@ -387,50 +297,79 @@ int main(int argc, char **argv)
                 }
                 new_tree->calculateTrueCenterLayout();
                 const auto &end_pos = new_tree->getTargetPositions();
-
                 const auto &start_pos = new_tree->getCurrentPositions();
-
                 delete tree;
                 tree = new_tree;
-
-                // delete current animator
                 delete animator;
                 animator = new Animator();
                 animator->startAnimation(start_pos, end_pos);
                 currentState = AppState::ANIMATING_LAYOUT;
-
                 hoveredNodeID = -1;
                 cameraX = 0.0f;
                 cameraY = 0.0f;
             }
-
             ImGui::SameLine();
-
             if (ImGui::Button("Random"))
             {
                 R1Tree *new_tree = R1Tree::generateRandomTree(ui_num_nodes);
                 new_tree->calculateTrueCenterLayout();
                 const auto &end_pos = new_tree->getTargetPositions();
-
                 const auto &start_pos = new_tree->getCurrentPositions();
-
                 delete tree;
                 tree = new_tree;
-
                 delete animator;
                 animator = new Animator();
                 animator->startAnimation(start_pos, end_pos);
                 currentState = AppState::ANIMATING_LAYOUT;
-
                 hoveredNodeID = -1;
                 cameraX = 0.0f;
                 cameraY = 0.0f;
                 updateEdgeListBuffer();
             }
-
+            ImGui::Separator();
+            ImGui::Text("Visualization");
+            ImGui::Checkbox("Show Blueprint", &showFramework);
+            if (ImGui::Button("Reset Tree"))
+            {
+                if (animator && !animator->isAnimating() && currentState == AppState::IDLE)
+                {
+                    currentState = AppState::ANIMATING_LAYOUT;
+                    std::cout << "Resetting tree to true center." << std::endl;
+                    const auto &start_pos = tree->getCurrentPositions();
+                    tree->calculateTrueCenterLayout();
+                    const auto &end_pos = tree->getTargetPositions();
+                    animator->startAnimation(start_pos, end_pos);
+                }
+            }
+            ImGui::SameLine();
+            const char *anim_button_text = (currentState == AppState::ANIMATING_FIND_CENTER) ? "Stop Animation" : "Animate Center Finding";
+            if (ImGui::Button(anim_button_text))
+            {
+                if (animator && !animator->isAnimating())
+                {
+                    if (currentState == AppState::ANIMATING_FIND_CENTER)
+                    {
+                        currentState = AppState::IDLE;
+                        std::cout << "findCenter animation stopped." << std::endl;
+                    }
+                    else if (currentState == AppState::IDLE)
+                    {
+                        std::cout << "Starting findCenter animation..." << std::endl;
+                        currentState = AppState::ANIMATING_FIND_CENTER;
+                        tree->prepareFindCenterAnimation();
+                        findCenter_step = 0;
+                        findCenter_last_step_time = glfwGetTime();
+                        animator->startAnimation(tree->current_positions, tree->getTargetPositions());
+                    }
+                }
+            }
+            ImGui::Separator();
+            ImGui::Text("Mouse Controls");
+            ImGui::TextDisabled("Scroll to change spacing");
+            ImGui::TextDisabled("Left-click a node to re-root");
+            ImGui::TextDisabled("Right-click and drag to pan");
             ImGui::End();
         }
-
         if (currentState == AppState::ANIMATING_LAYOUT)
         {
             animator->update(tree->current_positions);
@@ -458,12 +397,9 @@ int main(int argc, char **argv)
                 }
             }
         }
-
         display();
-
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
         if (tree && hoveredNodeID != -1 && currentState == AppState::IDLE)
         {
             const auto &positions = tree->getCurrentPositions();
@@ -473,32 +409,25 @@ int main(int argc, char **argv)
             ss << "Node ID: " << hoveredNodeID << "\n"
                << "Depth: " << depths[hoveredNodeID] << "\n"
                << "Subtree Width: " << widths[hoveredNodeID];
-
             int width, height;
             glfwGetFramebufferSize(window, &width, &height);
-
             glMatrixMode(GL_MODELVIEW);
             glPushMatrix();
             glLoadIdentity();
-
             glMatrixMode(GL_PROJECTION);
             glPushMatrix();
             glLoadIdentity();
             glOrtho(0, width, 0, height, -1, 1);
-
             renderText(positions[hoveredNodeID].x + cameraX + 15,
                        positions[hoveredNodeID].y + cameraY + 15,
                        ss.str());
-
             glPopMatrix();
             glMatrixMode(GL_MODELVIEW);
             glPopMatrix();
         }
-
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
     delete tree;
     delete animator;
     glfwDestroyWindow(window);
