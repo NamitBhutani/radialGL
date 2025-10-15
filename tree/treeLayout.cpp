@@ -85,7 +85,6 @@ void TreeLayout::calculateLayoutFromRoot(int rootID)
     finalizeLayout();
 }
 
-void TreeLayout::setDelta(float newDelta) { DELTA = newDelta; }
 float TreeLayout::getDelta() const { return DELTA; }
 const std::vector<Point> &TreeLayout::getTargetPositions() const { return target_positions; }
 const std::vector<int> &TreeLayout::getCenterNodes() const { return true_center_nodes; }
@@ -96,6 +95,19 @@ const std::vector<int> &TreeLayout::getParentMap() const { return parent_map; }
 const std::vector<std::vector<int>> &TreeLayout::getPruningGenerations() const { return pruning_generations; }
 const std::set<float> &TreeLayout::getFrameworkCircles() const { return framework_circles; }
 const std::vector<Wedge> &TreeLayout::getFrameworkWedges() const { return framework_wedges; }
+
+void TreeLayout::setDelta(float newDelta)
+{
+    DELTA = newDelta;
+    if (center_nodes.size() == 1)
+    {
+        calculateLayoutFromRoot(center_nodes[0]);
+    }
+    else
+    {
+        calculateTrueCenterLayout();
+    }
+}
 
 // gets all the steps for the leaf pruning animation
 void TreeLayout::prepareFindCenterAnimation()
