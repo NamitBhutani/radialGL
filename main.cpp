@@ -299,8 +299,8 @@ int main(int argc, char **argv)
     glfwSetKeyCallback(window, key_callback);
 
     framebuffer_size_callback(window, 800, 600);
-    glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
-
+    glClearColor(0.25f, 0.1f, 0.25f, 1.0f);
+    // enable antialiasing
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_POINT_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -373,10 +373,7 @@ int main(int argc, char **argv)
 
             if (ImGui::Button("Update"))
             {
-                currentState = AppState::IDLE;
-                animator = new Animator();
-                delete tree;
-                tree = new R1Tree(ui_num_nodes);
+                R1Tree *new_tree = new R1Tree(ui_num_nodes);
                 std::istringstream iss(edgeListBuffer);
                 std::string line;
                 while (std::getline(iss, line))
@@ -385,11 +382,23 @@ int main(int argc, char **argv)
                     int u, v;
                     if (lineStream >> u >> v)
                     {
-                        tree->addEdge(u, v);
+                        new_tree->addEdge(u, v);
                     }
                 }
-                tree->calculateTrueCenterLayout();
-                tree->current_positions = tree->getTargetPositions();
+                new_tree->calculateTrueCenterLayout();
+                const auto &end_pos = new_tree->getTargetPositions();
+
+                const auto &start_pos = new_tree->getCurrentPositions();
+
+                delete tree;
+                tree = new_tree;
+
+                // delete current animator
+                delete animator;
+                animator = new Animator();
+                animator->startAnimation(start_pos, end_pos);
+                currentState = AppState::ANIMATING_LAYOUT;
+
                 hoveredNodeID = -1;
                 cameraX = 0.0f;
                 cameraY = 0.0f;
@@ -399,12 +408,20 @@ int main(int argc, char **argv)
 
             if (ImGui::Button("Random"))
             {
-                currentState = AppState::IDLE;
-                animator = new Animator();
+                R1Tree *new_tree = R1Tree::generateRandomTree(ui_num_nodes);
+                new_tree->calculateTrueCenterLayout();
+                const auto &end_pos = new_tree->getTargetPositions();
+
+                const auto &start_pos = new_tree->getCurrentPositions();
+
                 delete tree;
-                tree = R1Tree::generateRandomTree(ui_num_nodes);
-                tree->calculateTrueCenterLayout();
-                tree->current_positions = tree->getTargetPositions();
+                tree = new_tree;
+
+                delete animator;
+                animator = new Animator();
+                animator->startAnimation(start_pos, end_pos);
+                currentState = AppState::ANIMATING_LAYOUT;
+
                 hoveredNodeID = -1;
                 cameraX = 0.0f;
                 cameraY = 0.0f;

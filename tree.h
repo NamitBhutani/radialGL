@@ -201,7 +201,7 @@ public:
                 for (int v : adj[u])
                     if (u < v)
                     {
-                        glColor3f(0.3f, 0.3f, 0.3f);
+                        glColor3f(0.6f, 0.6f, 0.6f);
                         Drawing::drawLine(current_positions[u], current_positions[v]);
                     }
 
@@ -235,7 +235,7 @@ public:
                 for (int v : adj[u])
                     if (u < v)
                     {
-                        glColor3f(0.3f, 0.3f, 0.3f);
+                        glColor3f(0.6f, 0.6f, 0.6f);
                         Drawing::drawLine(current_positions[u], current_positions[v]);
                     }
 
@@ -258,13 +258,13 @@ public:
                 else
                 {
                     float t = (max_depth > 1) ? static_cast<float>(std::max(0, depths[i] - 1)) / (max_depth - 1) : (depths[i] > 0 ? 1.0f : 0.0f);
-                    Color start_color = {1.0f, 1.0f, 0.0f}, end_color = {0.0f, 1.0f, 0.0f};
+                    Color start_color = {1.0f, 1.0f, 0.0f}, end_color = {0.1f, 0.4f, 1.0f};
                     Color node_color;
                     node_color.r = start_color.r * (1.0f - t) + end_color.r * t;
                     node_color.g = start_color.g * (1.0f - t) + end_color.g * t;
                     node_color.b = start_color.b * (1.0f - t) + end_color.b * t;
                     glColor3f(node_color.r, node_color.g, node_color.b);
-                    Drawing::drawCircle(current_positions[i], 6);
+                    Drawing::drawCircle(current_positions[i], 7);
                 }
             }
             if (hoveredNodeID != -1)
