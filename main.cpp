@@ -301,6 +301,11 @@ int main(int argc, char **argv)
     framebuffer_size_callback(window, 800, 600);
     glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
 
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
