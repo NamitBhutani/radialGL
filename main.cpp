@@ -247,9 +247,8 @@ int main(int argc, char **argv)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     const char *glsl_version = "#version 130";
     ImGui_ImplOpenGL3_Init(glsl_version);
-    bool show_demo_window = true;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     char edgeListBuffer[1024 * 16];
+    char filenameBuffer[256] = "tree.txt";
     auto updateEdgeListBuffer = [&]()
     {
         std::ostringstream oss;
@@ -275,6 +274,7 @@ int main(int argc, char **argv)
         if (show_tree_window)
         {
             ImGui::Begin("Controls & Editor", &show_tree_window, ImGuiWindowFlags_NoCollapse);
+            ImGui::Text("Edit Tree");
             static int ui_num_nodes = tree->getNumVertices();
             ImGui::Text("Nodes:");
             ImGui::SameLine();
@@ -326,6 +326,33 @@ int main(int argc, char **argv)
                 cameraY = 0.0f;
                 updateEdgeListBuffer();
             }
+
+            ImGui::Separator();
+            ImGui::Text("Load From File");
+            ImGui::InputText("##Filename", filenameBuffer, IM_ARRAYSIZE(filenameBuffer));
+            ImGui::SameLine();
+            if (ImGui::Button("Load"))
+            {
+                R1Tree *new_tree = R1Tree::loadTreeFromFile(filenameBuffer);
+                if (new_tree)
+                {
+                    new_tree->calculateTrueCenterLayout();
+                    const auto &end_pos = new_tree->getTargetPositions();
+                    const auto &start_pos = new_tree->getCurrentPositions();
+                    delete tree;
+                    tree = new_tree;
+                    delete animator;
+                    animator = new Animator();
+                    animator->startAnimation(start_pos, end_pos);
+                    currentState = AppState::ANIMATING_LAYOUT;
+                    hoveredNodeID = -1;
+                    cameraX = 0.0f;
+                    cameraY = 0.0f;
+                    ui_num_nodes = tree->getNumVertices();
+                    updateEdgeListBuffer();
+                }
+            }
+
             ImGui::Separator();
             ImGui::Text("Visualization");
             ImGui::Checkbox("Show Blueprint", &showFramework);
