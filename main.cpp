@@ -299,7 +299,7 @@ int main(int argc, char **argv)
     glfwSetKeyCallback(window, key_callback);
 
     framebuffer_size_callback(window, 800, 600);
-    glClearColor(0.25f, 0.1f, 0.25f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
     // enable antialiasing
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_POINT_SMOOTH);
