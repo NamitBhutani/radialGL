@@ -15,9 +15,8 @@ pkgs.mkShell {
     cmake
     ninja
     freeglut
+    xorg.libX11
+    xorg.libXrandr
+    wayland
   ];
-
-  shellHook = ''
-    fish
-  '';
 }
