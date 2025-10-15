@@ -33,6 +33,8 @@ int findCenter_step = 0;
 double findCenter_last_step_time = 0.0;
 const double FIND_CENTER_STEP_DURATION = 0.8;
 
+bool show_tree_window = true;
+
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -110,6 +112,10 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
+    const auto &io = ImGui::GetIO();
+    if (io.WantCaptureMouse)
+        return;
+
     if (tree && animator && !animator->isAnimating() && currentState == AppState::IDLE)
     {
         float currentDelta = tree->getDelta();
@@ -127,6 +133,10 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 {
+    const auto &io = ImGui::GetIO();
+    if (io.WantCaptureMouse)
+        return;
+
     if (currentState != AppState::IDLE && !(currentState == AppState::ANIMATING_FIND_CENTER && action == GLFW_PRESS))
         return;
 
@@ -166,6 +176,16 @@ void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     if (action != GLFW_PRESS)
+        return;
+
+    if (key == GLFW_KEY_E)
+    {
+        show_tree_window = !show_tree_window;
+        return;
+    }
+
+    const auto &io = ImGui::GetIO();
+    if (io.WantCaptureKeyboard)
         return;
 
     if (key == GLFW_KEY_R && animator && !animator->isAnimating() && currentState == AppState::IDLE)
@@ -238,6 +258,7 @@ int main(int argc, char **argv)
               << " - Right-Click and Drag to Pan.\n"
               << " - Press 'R' to reset.\n"
               << " - Scroll to change spacing.\n"
+              << " - Press 'E' to edit the tree.\n"
               << " - Press 'F' to animate finding the center.\n"
               << " - Press 'B' to toggle the blueprint view." << std::endl;
 
@@ -294,6 +315,20 @@ int main(int argc, char **argv)
     bool show_demo_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    char edgeListBuffer[1024 * 16];
+    auto updateEdgeListBuffer = [&]()
+    {
+        std::ostringstream oss;
+        for (const auto &edge : tree->getEdges())
+        {
+            oss << edge.first << " " << edge.second << "\n";
+        }
+        std::string edges_str = oss.str();
+        std::copy(edges_str.begin(), edges_str.end(), edgeListBuffer);
+        edgeListBuffer[edges_str.size()] = '\0';
+    };
+    updateEdgeListBuffer();
+
     while (!glfwWindowShouldClose(window))
     {
         if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
@@ -306,29 +341,47 @@ int main(int argc, char **argv)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        if (show_tree_window)
         {
             ImVec2 center = ImGui::GetMainViewport()->GetCenter();
             ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
+            ImGui::Begin("Edit Tree", &show_tree_window, ImGuiWindowFlags_NoCollapse);
+
             static int ui_num_nodes = tree->getNumVertices();
-
-            ImGui::Begin("Edit Tree", NULL, ImGuiWindowFlags_NoCollapse);
-
-            ImGui::Text("Nodes:"); 
+            ImGui::Text("Nodes:");
             ImGui::SameLine();
             ImGui::InputInt("##Nodes", &ui_num_nodes);
 
-            ImGui::Text("Edges:"); 
-            char buffer[1024 * 16];                   
-            ImGui::InputTextMultiline(" ", buffer, IM_ARRAYSIZE(buffer), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 8));
+            ImGui::Text("Edges:");
+            ImGui::InputTextMultiline("##Edges", edgeListBuffer, IM_ARRAYSIZE(edgeListBuffer), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 8));
 
             if (ImGui::Button("Update"))
             {
-                // TODO
+                currentState = AppState::IDLE;
+                animator = new Animator();
+                delete tree;
+                tree = new R1Tree(ui_num_nodes);
+                std::istringstream iss(edgeListBuffer);
+                std::string line;
+                while (std::getline(iss, line))
+                {
+                    std::istringstream lineStream(line);
+                    int u, v;
+                    if (lineStream >> u >> v)
+                    {
+                        tree->addEdge(u, v);
+                    }
+                }
+                tree->calculateTrueCenterLayout();
+                tree->current_positions = tree->getTargetPositions();
+                hoveredNodeID = -1;
+                cameraX = 0.0f;
+                cameraY = 0.0f;
             }
 
             ImGui::SameLine();
-            
+
             if (ImGui::Button("Random"))
             {
                 currentState = AppState::IDLE;
@@ -340,10 +393,9 @@ int main(int argc, char **argv)
                 hoveredNodeID = -1;
                 cameraX = 0.0f;
                 cameraY = 0.0f;
-                // TODO: update textarea with new edges
+                updateEdgeListBuffer();
             }
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
         }
 

@@ -67,6 +67,22 @@ public:
         }
     }
 
+    const std::vector<std::pair<int, int>> getEdges() const
+    {
+        std::vector<std::pair<int, int>> edges;
+        for (int u = 0; u < num_vertices; u++)
+        {
+            for (int v : adj[u])
+            {
+                if (u < v)
+                {
+                    edges.emplace_back(u, v);
+                }
+            }
+        }
+        return edges;
+    }
+
     void calculateTrueCenterLayout()
     {
         resetLayoutState();
