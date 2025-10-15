@@ -500,7 +500,7 @@ private:
         float start_alpha;
         float angle_center = (alpha1 + alpha2) / 2.0f;
 
-        if (tau_rho < (alpha2 - alpha1))
+        if (alpha2 - alpha1 < 2 * M_PI && tau_rho < (alpha2 - alpha1))
         {
             total_angle = tau_rho;
             start_alpha = angle_center - (tau_rho / 2.0f);
