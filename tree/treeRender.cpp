@@ -123,6 +123,7 @@ void TreeRenderer::draw(const std::vector<Point> &current_positions, int hovered
             }
             if (isTrueCentralNode)
             {
+                // highlight the true center nodes in white
                 glColor3f(1.0f, 1.0f, 1.0f);
                 Drawing::drawFilledCircle(current_positions[i], 9);
             }
@@ -139,6 +140,7 @@ void TreeRenderer::draw(const std::vector<Point> &current_positions, int hovered
                 Drawing::drawFilledCircle(current_positions[i], 7);
             }
         }
+        // highlight hovered node's subtree
         if (hoveredNodeID != -1)
         {
             highlightSubtree(hoveredNodeID, current_positions);

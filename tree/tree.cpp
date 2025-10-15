@@ -47,16 +47,19 @@ Tree Tree::loadFromFile(const std::string &filename)
         std::cerr << "error opening file: " << filename << std::endl;
         return Tree(0);
     }
-    int n;
+
     // the file's first line should be the number of nodes
+    int n;
     infile >> n;
     Tree tree(n);
-    int u, v;
     // then it just reads pairs of nodes to connect
+
+    int u, v;
     while (infile >> u >> v)
     {
         tree.addEdge(u, v);
     }
+
     infile.close();
     return tree;
 }

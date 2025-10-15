@@ -73,9 +73,12 @@ void TreeLayout::calculateTrueCenterLayout()
 void TreeLayout::calculateLayoutFromRoot(int rootID)
 {
     resetLayoutState();
+
+    // force center node
     center_nodes.clear();
     center_nodes.push_back(rootID);
     true_center_nodes = center_nodes;
+
     computeWidthsAndDepths(rootID, -1, 0);
     target_positions[rootID] = {0.0f, 0.0f};
     layoutSubTree(rootID, -1, 0.0f, 2 * M_PI);
@@ -87,6 +90,7 @@ float TreeLayout::getDelta() const { return DELTA; }
 const std::vector<Point> &TreeLayout::getTargetPositions() const { return target_positions; }
 const std::vector<int> &TreeLayout::getCenterNodes() const { return true_center_nodes; }
 const std::vector<int> &TreeLayout::getDepths() const { return depths; }
+const std::vector<int> &TreeLayout::getWidths() const { return widths; }
 int TreeLayout::getMaxDepth() const { return max_depth; }
 const std::vector<int> &TreeLayout::getParentMap() const { return parent_map; }
 const std::vector<std::vector<int>> &TreeLayout::getPruningGenerations() const { return pruning_generations; }

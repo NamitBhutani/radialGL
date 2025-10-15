@@ -29,6 +29,7 @@ public:
     const std::vector<Point> &getTargetPositions() const;
     const std::vector<int> &getCenterNodes() const;
     const std::vector<int> &getDepths() const;
+    const std::vector<int> &getWidths() const;
     int getMaxDepth() const;
     const std::vector<int> &getParentMap() const;
     const std::vector<std::vector<int>> &getPruningGenerations() const;
