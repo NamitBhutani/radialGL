@@ -257,8 +257,8 @@ public:
                 }
                 else
                 {
-                    float t = (max_depth > 0) ? static_cast<float>(depths[i]) / max_depth : 0.0f;
-                    Color start_color = {1.0f, 1.0f, 0.0f}, end_color = {0.2f, 0.2f, 1.0f};
+                    float t = (max_depth > 1) ? static_cast<float>(std::max(0, depths[i] - 1)) / (max_depth - 1) : (depths[i] > 0 ? 1.0f : 0.0f);
+                    Color start_color = {1.0f, 1.0f, 0.0f}, end_color = {0.0f, 1.0f, 0.0f};
                     Color node_color;
                     node_color.r = start_color.r * (1.0f - t) + end_color.r * t;
                     node_color.g = start_color.g * (1.0f - t) + end_color.g * t;
