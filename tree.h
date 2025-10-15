@@ -169,7 +169,7 @@ public:
             for (float radius : framework_circles)
             {
                 glColor3f(0.2f, 0.2f, 0.3f);
-                Drawing::drawFilledCircle(screenCenter, radius);
+                Drawing::drawCircleOutline(screenCenter, radius);
             }
             for (const auto &wedge : framework_wedges)
             {
@@ -180,7 +180,7 @@ public:
                     screenCenter.x + (wedge.radius * cosf(wedge.end_angle)),
                     screenCenter.y + (wedge.radius * sinf(wedge.end_angle))};
                 Point center = {screenCenter.x + wedge.center.x, screenCenter.y + wedge.center.y};
-                glColor3f(0.2f, 0.2f, 0.3f);
+                glColor3f(0.2f, 0.4f, 0.4f);
                 Drawing::drawLine(center, start);
                 Drawing::drawLine(center, end);
             }

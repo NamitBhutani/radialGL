@@ -18,6 +18,36 @@ namespace Drawing
         glEnd();
     }
 
+    void drawCircleOutline(Point center, int radius)
+    {
+        int x = radius;
+        int y = 0;
+        int d = 1 - x;
+
+        while (x >= y)
+        {
+            drawPixel(center.x + x, center.y + y);
+            drawPixel(center.x + y, center.y + x);
+            drawPixel(center.x - y, center.y + x);
+            drawPixel(center.x - x, center.y + y);
+            drawPixel(center.x - x, center.y - y);
+            drawPixel(center.x - y, center.y - x);
+            drawPixel(center.x + y, center.y - x);
+            drawPixel(center.x + x, center.y - y);
+
+            y++;
+            if (d <= 0)
+            {
+                d += 2 * y + 1;
+            }
+            else
+            {
+                x--;
+                d += 2 * (y - x) + 1;
+            }
+        }
+    }
+
     void drawFilledCircle(Point center, int radius)
     {
         int x = radius;
