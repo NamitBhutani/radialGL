@@ -52,10 +52,20 @@ void display()
 void renderText(float x, float y, const std::string &text)
 {
     glColor3f(1.0f, 1.0f, 1.0f);
-    glRasterPos2f(x, y);
-    for (char const &c : text)
+    float lineHeight = 16.0f;
+    std::istringstream iss(text);
+    std::string line;
+    float yOffset = 0.0f;
+    float textWidth = 0.0f;
+    while (std::getline(iss, line))
     {
-        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
+        glRasterPos2f(x, y - yOffset);
+        for (char const &c : line)
+        {
+            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, c);
+        }
+        yOffset += lineHeight;
+        textWidth = std::max(textWidth, line.size() * 9.0f);
     }
 }
 
