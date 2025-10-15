@@ -86,8 +86,8 @@ void TreeLayout::calculateLayoutFromRoot(int rootID)
 }
 
 float TreeLayout::getDelta() const { return DELTA; }
-int TreeLayout::getHalfWidth() const { return halfwidth; }
-int TreeLayout::getHalfHeight() const { return halfheight; }
+float TreeLayout::getHalfWidth() const { return static_cast<float>(halfwidth); }
+float TreeLayout::getHalfHeight() const { return static_cast<float>(halfheight); }
 const std::vector<Point> &TreeLayout::getTargetPositions() const { return target_positions; }
 const std::vector<int> &TreeLayout::getCenterNodes() const { return true_center_nodes; }
 const std::vector<int> &TreeLayout::getDepths() const { return depths; }

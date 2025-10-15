@@ -26,8 +26,8 @@ public:
     void setDelta(float newDelta);
     float getDelta() const;
 
-    int getHalfWidth() const;
-    int getHalfHeight() const;
+    float getHalfWidth() const;
+    float getHalfHeight() const;
 
     const std::vector<Point> &getTargetPositions() const;
     const std::vector<int> &getCenterNodes() const;
