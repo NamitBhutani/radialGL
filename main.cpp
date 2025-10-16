@@ -299,7 +299,7 @@ int main(int argc, char **argv)
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     // buffer to hold the tree's edge list for the ui text box
-    char edgeListBuffer[1024 * 16];
+    char edgeListBuffer[8192 * 16];
     char filenameBuffer[256] = "tree.txt";
 
     // lambda to keep the edge list text box updated
