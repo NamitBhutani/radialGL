@@ -167,6 +167,28 @@
 				padding: 0;
 				font-size: 0.95em;
 			}
+
+			img {
+				width: 100%;
+				border-radius: 8px;
+				border-color: #6c7086;
+				border-style: solid;
+				border-width: 1px;
+				margin-top: 10px;
+				margin-bottom: 10px;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+			}
+
+			figure {
+				padding: 4px;
+				margin: auto;
+			}
+
+			figcaption {
+				color: var(--peach);
+				font-style: italic;
+				text-align: center;
+			}
 		</style>
 	</head>
 	<body>
@@ -184,6 +206,10 @@
 			<main>
 				<section>
 					<h2>Project Overview</h2>
+					<img
+						src="assets/main.png"
+						alt="Screenshot of the application"
+					/>
 					<p>
 						This project is an interactive C++ application for
 						visualizing free trees, which are undirected, acyclic
@@ -627,6 +653,30 @@
 						<code>N = 2000</code> and panning around starts lagging
 						a bit at <code>N = 5000</code>.
 					</p>
+				</section>
+
+				<section>
+					<h2>Screenshots</h2>
+					<figure style="width: 50%">
+						<img src="assets/tree2.png" />
+						<img src="assets/tree1.png" />
+						<figcaption>
+							Randomly generated trees with
+							<code>N = 50</code> nodes
+						</figcaption>
+					</figure>
+					<figure style="width: 75%">
+						<img src="assets/center.png" />
+						<figcaption>Center finding animation</figcaption>
+					</figure>
+					<figure style="width: 75%">
+						<img src="assets/blueprint.png" />
+						<figcaption>Layout blueprint overlay</figcaption>
+					</figure>
+					<figure style="width: 50%">
+						<img src="assets/menu.png" />
+						<figcaption>Control panel GUI</figcaption>
+					</figure>
 				</section>
 
 				<section>
