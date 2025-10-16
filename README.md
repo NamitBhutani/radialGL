@@ -1,10 +1,38 @@
 # Interactive Free Tree Visualization
 
+_Made by Namit Bhutani (2022B3A70885H) and Karthik Prakash (2022A7PS0022H)_
+
 This project allows users to generate, load, and manipulate tree structures in real-time. The core visualization uses a radial layout to arrange nodes in a visually appealing circular pattern, with smooth animations providing feedback for every change.
 
 The radial drawing method is based on the paper **"Drawing Free Trees" by P. D. Eades**.
 
 ![Main](docs/assets/main.png)
+
+## Technologies & Libraries Used
+
+-   **Language:** C++
+-   **Graphics API:** OpenGL
+-   **Windowing & Input:** GLFW
+-   **OpenGL Function Loading:** GLAD
+-   **GUI:** ImGui
+-   **Build System:** CMake
+
+## Setup
+
+ImGui and GLAD are included as Git submodules.
+
+```bash
+git clone --recursive https://github.com/NamitBhutani/radialGL
+```
+
+CMake is used to manage the build process.
+
+```bash
+mkdir -p build && cd build
+cmake ..
+cmake --build .
+./FreeTreeDrawing
+```
 
 ## Features
 
@@ -34,29 +62,3 @@ _For a more detailed explanation of the algorithms and implementation, take a lo
 -   **GUI Panel:** The control panel is built with **ImGui**, providing a powerful and easy-to-use interface.
 -   **Layout Blueprint:** A "Show Blueprint" checkbox toggles the visibility of the geometric framework (concentric circles and angular wedges) used by the layout algorithm.
 -   **Legacy Graphics Primitives:** Lines and circles are rendered from scratch using **Bresenham's and Midpoint Circle algorithms** via immediate mode OpenGL (`graphics.h`).
-
-## Technologies & Libraries Used
-
--   **Language:** C++
--   **Graphics API:** OpenGL
--   **Windowing & Input:** GLFW
--   **OpenGL Function Loading:** GLAD
--   **GUI:** ImGui
--   **Build System:** CMake
-
-## Setup
-
-ImGui and GLAD are included as Git submodules.
-
-```bash
-git clone --recursive https://github.com/NamitBhutani/radialGL
-```
-
-CMake is used to manage the build process.
-
-```bash
-mkdir -p build && cd build
-cmake ..
-cmake --build .
-./FreeTreeDrawing
-```

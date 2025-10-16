@@ -1,204 +1,687 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Documentation: Interactive Free Tree Visualization</title>
-    <style>
-        /* Catppuccin Mocha Theme */
-        :root {
-            --rosewater: #f5e0dc;
-            --flamingo: #f2cdcd;
-            --pink: #f5c2e7;
-            --mauve: #cba6f7;
-            --red: #f38ba8;
-            --maroon: #eba0ac;
-            --peach: #fab387;
-            --yellow: #f9e2af;
-            --green: #a6e3a1;
-            --teal: #94e2d5;
-            --sky: #89dceb;
-            --sapphire: #74c7ec;
-            --blue: #89b4fa;
-            --lavender: #b4befe;
-            --text: #cdd6f4;
-            --subtext1: #bac2de;
-            --subtext0: #a6adc8;
-            --overlay2: #9399b2;
-            --overlay1: #7f849c;
-            --overlay0: #6c7086;
-            --surface2: #585b70;
-            --surface1: #45475a;
-            --surface0: #313244;
-            --base: #1e1e2e;
-            --mantle: #181825;
-            --crust: #11111b;
-        }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>
+			Project Documentation: Interactive Free Tree Visualization
+		</title>
+		<style>
+			/* Catppuccin Mocha Theme */
+			:root {
+				--rosewater: #f5e0dc;
+				--flamingo: #f2cdcd;
+				--pink: #f5c2e7;
+				--mauve: #cba6f7;
+				--red: #f38ba8;
+				--maroon: #eba0ac;
+				--peach: #fab387;
+				--yellow: #f9e2af;
+				--green: #a6e3a1;
+				--teal: #94e2d5;
+				--sky: #89dceb;
+				--sapphire: #74c7ec;
+				--blue: #89b4fa;
+				--lavender: #b4befe;
+				--text: #cdd6f4;
+				--subtext1: #bac2de;
+				--subtext0: #a6adc8;
+				--overlay2: #9399b2;
+				--overlay1: #7f849c;
+				--overlay0: #6c7086;
+				--surface2: #585b70;
+				--surface1: #45475a;
+				--surface0: #313244;
+				--base: #1e1e2e;
+				--mantle: #181825;
+				--crust: #11111b;
+			}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text);
-            background-color: var(--base);
-            margin: 0;
-            padding: 0;
-        }
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+					Roboto, Helvetica, Arial, sans-serif;
+				line-height: 1.6;
+				color: var(--text);
+				background-color: var(--base);
+				margin: 0;
+				padding: 0;
+			}
 
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: var(--mantle);
-            border: 1px solid var(--surface0);
-            border-radius: 8px;
-        }
+			.container {
+				max-width: 900px;
+				margin: 20px auto;
+				padding: 20px;
+				background-color: var(--mantle);
+				border: 1px solid var(--surface0);
+				border-radius: 8px;
+			}
 
-        header {
-            background-color: var(--crust);
-            color: var(--text);
-            padding: 20px;
-            border-radius: 5px 5px 0 0;
-            text-align: center;
-        }
-        
-        header p {
-            color: var(--subtext1);
-        }
+			header {
+				background-color: var(--crust);
+				color: var(--text);
+				padding: 20px;
+				border-radius: 5px 5px 0 0;
+				text-align: center;
+			}
 
-        h1 {
-            color: var(--mauve);
-            margin: 0;
-        }
+			header p {
+				color: var(--subtext1);
+			}
 
-        h2 {
-            color: var(--teal);
-            border-bottom: 2px solid var(--teal);
-            padding-bottom: 10px;
-            margin-top: 40px;
-        }
+			h1 {
+				color: var(--mauve);
+				margin: 0;
+			}
 
-        h3 {
-            color: var(--peach);
-            border-bottom: 1px solid var(--surface1);
-            padding-bottom: 5px;
-        }
+			h2 {
+				color: var(--teal);
+				border-bottom: 2px solid var(--teal);
+				padding-bottom: 10px;
+				margin-top: 40px;
+			}
 
-        code {
-            background-color: var(--surface0);
-            padding: 3px 6px;
-            border-radius: 4px;
-            font-family: "Courier New", Courier, monospace;
-            color: var(--red);
-        }
+			h3 {
+				color: var(--peach);
+				border-bottom: 1px solid var(--surface1);
+				padding-bottom: 5px;
+			}
 
-        .feature-list li {
-            margin-bottom: 10px;
-        }
+			code {
+				background-color: var(--surface0);
+				padding: 3px 6px;
+				border-radius: 4px;
+				font-family: "Courier New", Courier, monospace;
+				color: var(--red);
+			}
 
-        .highlight {
-            font-weight: bold;
-            color: var(--blue);
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 0.9em;
-            color: var(--subtext0);
-        }
-    </style>
-</head>
-<body>
+			.feature-list li {
+				margin-bottom: 10px;
+			}
 
-    <div class="container">
-        <header>
-            <h1>Project Documentation</h1>
-            <p>Interactive Free Tree Visualization in C++ and OpenGL</p>
-        </header>
+			.highlight {
+				font-weight: bold;
+				color: var(--blue);
+			}
 
-        <main>
-            <section>
-                <h2>Project Overview</h2>
-                <p>
-                    This project is an interactive C++ application for visualizing free trees, which are undirected, acyclic graphs. It utilizes a radial layout algorithm to arrange nodes in a visually appealing circular pattern. The application is built using modern C++ and leverages libraries like OpenGL for rendering, GLFW for window and input management, and ImGui for creating a graphical user interface.
-                </p>
-                <p>
-                    The core of the application allows users to generate, load, and manipulate tree structures in real time, with smooth animations providing visual feedback for every change.
-                </p>
-            </section>
+			footer {
+				text-align: center;
+				margin-top: 30px;
+				font-size: 0.9em;
+				color: var(--subtext0);
+			}
 
-            <section>
-                <h2>Features</h2>
+			table {
+				width: 100%;
+				max-width: 100%;
+				border-collapse: separate;
+				border-spacing: 0;
+				margin-top: 16px;
+				background-color: transparent;
+				box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+				border-radius: 8px;
+				overflow: hidden;
+			}
 
-                <h3>Tree Generation and Management</h3>
-                <ul >
-                    <li><strong class="highlight">Random Tree Generation:</strong> Through the GUI, we can specify the number of nodes and click the "Random" button. This triggers the <code>R1Tree::generateRandomTree</code> function, which uses a Prüfer sequence to create a valid tree structure.</li>
-                    <li><strong class="highlight">Load from File:</strong> We can load a tree structure from a text file using the "Load" button. The format is an integer <code>N</code> on the first line for the number of nodes, followed by lines of edge pairs like <code>u v</code>. This is handled by <code>R1Tree::loadTreeFromFile</code>.</li>
-                    <li><strong class="highlight">Live Tree Editing:</strong> The GUI includes a multiline text box displaying the current tree's edge list. We can manually add, remove, or modify edges and click "Update" to apply the changes. The application parses this text, builds a new tree, and animates the transition from the old layout to the new one.</li>
-                </ul>
+			table caption {
+				caption-side: top;
+				color: var(--subtext1);
+				font-weight: 600;
+				padding: 10px 12px;
+			}
 
-                <h3>Interactive Visualization and Controls</h3>
-                <ul>
-                    <li><strong class="highlight">Radial Layout Algorithm:</strong> The primary layout is a radial or polar arrangement. The application first finds the true center of the tree and places it at the origin. Subsequent nodes are placed on concentric circles based on their depth from the center, with their angular position determined by the width of their subtree. This is implemented in <code>calculateTrueCenterLayout</code> and <code>drawSubTree</code>.</li>
-                    <li><strong class="highlight">Interactive Rerooting:</strong> By <span class="highlight">left clicking</span> any node, the user can instantly make it the new root of the tree. The code recalculates the entire layout from this new perspective and smoothly animates all nodes to their new positions. This is handled in <code>mouse_button_callback</code> by calling <code>calculateLayoutFromRoot</code>.</li>
-                    <li><strong class="highlight">Smooth Panning:</strong> Users can <span class="highlight">right click and drag</span> the mouse to pan the camera across the scene, allowing for easy movement for large trees.
-                    <li><strong class="highlight">Dynamic Spacing:</strong> By using the <span class="highlight">mouse scroll wheel</span>, one can increase or decrease the spacing between the concentric layers of the tree. This adjusts the <code>DELTA</code> value in the <code>R1Tree</code> class, which triggers a relayout and animation to the new scale.</li>
-                    <li><strong class="highlight">Node Tooltip:</strong> Hovering the mouse over a node displays a tooltip with key information: its unique ID, its depth relative to the current root, and the width of its subtree, meaning the number of leaf nodes it contains. The hovered node and its entire subtree are also highlighted.</li>
-                </ul>
+			table thead th {
+				background: linear-gradient(
+					180deg,
+					var(--surface1),
+					var(--surface2)
+				);
+				color: var(--text);
+				font-weight: 700;
+				padding: 12px 14px;
+				text-align: left;
+				border-bottom: 1px solid var(--surface0);
+				position: sticky;
+				top: 0;
+				z-index: 2;
+			}
 
-                <h3>Animations</h3>
-                <ul>
-                    <li><strong class="highlight">Smooth Transitions:</strong> Almost every action that changes the tree's layout, like rerooting, updating the structure, or changing spacing, is animated. The <code>Animator</code> class in <code>animate.h</code> performs a time based linear interpolation (<code>lerp</code>) between the start and end positions of each node, for a smooth animation.</li>
-                    <li><strong class="highlight">Center Finding Animation:</strong> The project includes a feature to visualize the algorithm for finding the center. The application iteratively prunes the leaf nodes of the tree, generation by generation. Pruned nodes are faded out, showing how the algorithm converges to the central one or two nodes. This state is managed by the <code>AppState::ANIMATING_FIND_CENTER</code> enum and implemented in <code>prepareFindCenterAnimation</code>.</li>
-                </ul>
-                
-                <h3>Technical and GUI Features</h3>
-                 <ul>
-                    <li><strong class="highlight">GUI:</strong> The control panel is built using <span class="highlight">ImGui</span>, a powerful and easy to use library for creating GUI in C++.</li>
-                     <li><strong class="highlight">Layout Blueprint:</strong> A "Show Blueprint" checkbox in the GUI toggles the visibility of the underlying geometric framework used by the radial layout algorithm. When enabled, it draws the concentric circles and the angular wedges allocated to each subtree.</li>
-                     <li><strong class="highlight">Legacy Graphics Primitives:</strong> The rendering of lines using Bresenham's algorithm and circles with the Midpoint circle algorithm is implemented from scratch using legacy immediate mode OpenGL. This is found in <code>graphics.h</code>.</li>
-                </ul>
-            </section>
-            
-            <section>
-                <h2>General Discussion on the Algorithm</h2>
-                <p>
-                    The implemented layout is a radial drawing algorithm that arranges the tree on a series of concentric circles. To ensure a balanced and symmetric visualization, it begins by finding the "center" of the tree and designates it as the root.
-                </p>
-                <p>
-                    The algorithm then determines the final position for each node in two phases. First, it traverses the tree to calculate the "width" of each subtree, defined by its number of leaves. This width determines the size of the angular wedge each branch will occupy. Second, a top down traversal places each node on a circle corresponding to its depth from the root, positioned angularly within its assigned wedge. This process guarantees a planar drawing with no edge crossings.
-                </p>
-            </section>
+			table tbody td {
+				padding: 10px 14px;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+				color: var(--subtext1);
+				vertical-align: middle;
+			}
 
-            <section>
-                <h2>Issues and Coding Challenges</h2>
-                <ul>
-                    <li><strong>Legacy OpenGL Pipeline Limitations:</strong> The drawing functions in <code>graphics.h</code> use immediate mode OpenGL (e.g., <code>glBegin</code>/<code>glEnd</code>), which is deprecated. This caused issues when trying to attempt to use shaders for more aesthetic effects (like glow around nodes), but shaders are a core feature of modern OpenGL and are incompatible with the legacy functions used in this project. This led to errors and integration issues, ultimately preventing the implementation of shaders.</li>
-                </ul>
-            </section>
+			table tbody tr:nth-child(even) {
+				background-color: rgba(255, 255, 255, 0.02);
+			}
 
-            <section>
-                <h2>Timing Analysis</h2>
-                <p>The computational complexity of the core algorithms is highly efficient:</p>
-                <ul>
-                    <li><strong>Layout Calculation:</strong> Both the <code>computeWidthsAndDepths</code> and <code>drawSubTree</code> functions are based on tree traversals. Therefore, calculating a new layout is linear in the number of nodes, or O(V), where V is the number of vertices.</li>
-                    <li><strong>Rendering:</strong> In each frame, the application iterates through all edges and nodes to draw them. This is an O(V+E) operation, which is O(V) for a tree. Performance is generally excellent for trees up to several hundred nodes. For thousands of nodes, the immediate mode OpenGL approach may become a bottleneck.</li>
-                    <li><strong>Animation:</strong> The animation update loop in <code>Animator::update</code> iterates over all node positions, making it an O(V) operation per frame.</li>
-                </ul>
-            </section>
+			table tbody tr:hover {
+				background-color: rgba(149, 153, 178, 0.06);
+			}
 
-            <section>
-                <h2>References and Libraries</h2>
-                <ul>
-                    <li><strong>Paper and Algorithm:</strong> This algorithm is a specific type of radial drawing, a method described in the paper Drawing Free Trees by P. D. Eades.</li>
-                    <li><strong>OpenGL:</strong> The core graphics API used for rendering.</li>
-                    <li><strong>GLFW:</strong> A multiplatform library for creating windows, contexts, and managing input.</li>
-                    <li><strong>GLAD:</strong> An OpenGL Loading Library used to access modern OpenGL functions.</li>
-                    <li><strong>ImGui:</strong> A bloat free GUI library for C++.</li>
-                </ul>
-            </section>
-        </main>
-    </div>
+			table th code,
+			table td code {
+				background: transparent;
+				color: var(--pink);
+				padding: 0;
+				font-size: 0.95em;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<h1>Interactive Free Tree Visualization in OpenGL</h1>
+				<p>
+					<strong class="highlight">Namit Bhutani</strong>
+					(2022B3A70885H),
+					<strong class="highlight">Karthik Prakash</strong>
+					(2022A7PS0022H)
+				</p>
+			</header>
 
-</body>
+			<main>
+				<section>
+					<h2>Project Overview</h2>
+					<p>
+						This project is an interactive C++ application for
+						visualizing free trees, which are undirected, acyclic
+						graphs. It utilizes a radial layout algorithm to arrange
+						nodes in a visually appealing circular pattern. The
+						application is built using modern C++ and leverages
+						libraries like OpenGL for rendering, GLFW for window and
+						input management, and ImGui for creating a graphical
+						user interface.
+					</p>
+					<p>
+						The core of the application allows users to generate,
+						load, and manipulate tree structures in real time, with
+						smooth animations providing visual feedback for every
+						change.
+					</p>
+				</section>
+
+				<section>
+					<h2>Features</h2>
+
+					<h3>Tree Generation and Management</h3>
+					<ul>
+						<li>
+							<strong class="highlight"
+								>Random Tree Generation:</strong
+							>
+							Through the GUI, we can specify the number of nodes
+							and click the "Random" button. This triggers the
+							<code>R1Tree::generateRandomTree</code> function,
+							which uses a Prüfer sequence to create a valid tree
+							structure.
+						</li>
+						<li>
+							<strong class="highlight">Load from File:</strong>
+							We can load a tree structure from a text file using
+							the "Load" button. The format is an integer
+							<code>N</code> on the first line for the number of
+							nodes, followed by lines of edge pairs like
+							<code>u v</code>. This is handled by
+							<code>R1Tree::loadTreeFromFile</code>.
+						</li>
+						<li>
+							<strong class="highlight"
+								>Live Tree Editing:</strong
+							>
+							The GUI includes a multiline text box displaying the
+							current tree's edge list. We can manually add,
+							remove, or modify edges and click "Update" to apply
+							the changes. The application parses this text,
+							builds a new tree, and animates the transition from
+							the old layout to the new one.
+						</li>
+					</ul>
+
+					<h3>Interactive Visualization and Controls</h3>
+					<ul>
+						<li>
+							<strong class="highlight"
+								>Radial Layout Algorithm:</strong
+							>
+							The primary layout is a radial or polar arrangement.
+							The application first finds the true center of the
+							tree and places it at the origin. Subsequent nodes
+							are placed on concentric circles based on their
+							depth from the center, with their angular position
+							determined by the width of their subtree. This is
+							implemented in
+							<code>calculateTrueCenterLayout</code> and
+							<code>drawSubTree</code>.
+						</li>
+						<li>
+							<strong class="highlight"
+								>Interactive Rerooting:</strong
+							>
+							By <span class="highlight">left clicking</span> any
+							node, the user can instantly make it the new root of
+							the tree. The code recalculates the entire layout
+							from this new perspective and smoothly animates all
+							nodes to their new positions. This is handled in
+							<code>mouse_button_callback</code> by calling
+							<code>calculateLayoutFromRoot</code>.
+						</li>
+						<li>
+							<strong class="highlight">Smooth Panning:</strong>
+							Users can
+							<span class="highlight">right click and drag</span>
+							the mouse to pan the camera across the scene,
+							allowing for easy movement for large trees.
+						</li>
+						<li>
+							<strong class="highlight">Dynamic Spacing:</strong>
+							By using the
+							<span class="highlight">mouse scroll wheel</span>,
+							one can increase or decrease the spacing between the
+							concentric layers of the tree. This adjusts the
+							<code>DELTA</code> value in the
+							<code>R1Tree</code> class, which triggers a relayout
+							and animation to the new scale.
+						</li>
+						<li>
+							<strong class="highlight">Node Tooltip:</strong>
+							Hovering the mouse over a node displays a tooltip
+							with key information: its unique ID, its depth
+							relative to the current root, and the width of its
+							subtree, meaning the number of leaf nodes it
+							contains. The hovered node and its entire subtree
+							are also highlighted.
+						</li>
+					</ul>
+
+					<h3>Animations</h3>
+					<ul>
+						<li>
+							<strong class="highlight"
+								>Smooth Transitions:</strong
+							>
+							Almost every action that changes the tree's layout,
+							like rerooting, updating the structure, or changing
+							spacing, is animated. The
+							<code>Animator</code> class in
+							<code>animate.h</code> performs a time based linear
+							interpolation (<code>lerp</code>) between the start
+							and end positions of each node, for a smooth
+							animation.
+						</li>
+						<li>
+							<strong class="highlight"
+								>Center Finding Animation:</strong
+							>
+							The project includes a feature to visualize the
+							algorithm for finding the center. The application
+							iteratively prunes the leaf nodes of the tree,
+							generation by generation. Pruned nodes are faded
+							out, showing how the algorithm converges to the
+							central one or two nodes. This state is managed by
+							the
+							<code>AppState::ANIMATING_FIND_CENTER</code> enum
+							and implemented in
+							<code>prepareFindCenterAnimation</code>.
+						</li>
+					</ul>
+
+					<h3>Technical and GUI Features</h3>
+					<ul>
+						<li>
+							<strong class="highlight">GUI:</strong> The control
+							panel is built using
+							<span class="highlight">ImGui</span>, a powerful and
+							easy to use library for creating GUI in C++.
+						</li>
+						<li>
+							<strong class="highlight">Layout Blueprint:</strong>
+							A "Show Blueprint" checkbox in the GUI toggles the
+							visibility of the underlying geometric framework
+							used by the radial layout algorithm. When enabled,
+							it draws the concentric circles and the angular
+							wedges allocated to each subtree.
+						</li>
+						<li>
+							<strong class="highlight"
+								>Legacy Graphics Primitives:</strong
+							>
+							The rendering of lines using Bresenham's algorithm
+							and circles with the Midpoint circle algorithm is
+							implemented from scratch using legacy immediate mode
+							OpenGL. This is found in <code>graphics.h</code>.
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>References and Libraries</h2>
+					<ul>
+						<li>
+							<strong>R1 Algorithm:</strong> This algorithm is a
+							specific type of radial drawing, a method described
+							in the paper Drawing Free Trees by P. D. Eades.
+						</li>
+						<li>
+							<strong>OpenGL:</strong> The core graphics API used
+							for rendering.
+						</li>
+						<li>
+							<strong>GLFW:</strong> A multiplatform library for
+							creating windows, contexts, and managing input.
+						</li>
+						<li>
+							<strong>GLAD:</strong> An OpenGL Loading Library
+							used to access modern OpenGL functions.
+						</li>
+						<li>
+							<strong>ImGui:</strong> A bloat free GUI library for
+							C++.
+						</li>
+						<li>
+							<strong>CMake:</strong> A cross-platform build
+							system used to manage the build process.
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Project Structure</h2>
+					<p>
+						<code>main.cpp</code> initializes OpenGL and handles the
+						main application loop. It uses ImGui for the control
+						panel GUI and GLFW for window management and input
+						handling.
+					</p>
+					<p>
+						<code>graphics.h</code> contains the implementation of
+						midpoint algorithms for drawing lines and circles using
+						immediate mode OpenGL. It also has a variant for filled
+						circles, where we loop over and fill in all pixels
+						between two boundary pixels at the same y-coordinate.
+					</p>
+					<p>
+						<code>animate.h</code> defines the
+						<code>Animator</code> class, which manages smooth
+						transitions of node positions using linear interpolation
+						over time.
+					</p>
+					<p>
+						<code>tree/tree.cpp</code> defines functions for
+						loading, generating and manipulating tree structures.
+						<code>tree/treeLayout.cpp</code> contains the radial
+						layout algorithm and functions for calculating node
+						positions based on the tree structure while
+						<code>tree/treeRender.cpp</code> has functions for
+						rendering the tree, including nodes, edges, and
+						highlights.
+					</p>
+					<p>
+						We used CMake as our build system, which is configured
+						in <code>CMakeLists.txt</code>. While OpenGL, GLUT and
+						GLFW need to be installed as system libraries, other
+						dependencies like GLAD and ImGui are included as
+						submodules in <code>glad/</code> and
+						<code>imgui/</code>.
+					</p>
+				</section>
+
+				<section>
+					<h2>Algorithms Used</h2>
+					<h3>R1 Algorithm</h3>
+					<p>
+						The implemented layout is a radial drawing algorithm
+						that arranges the tree on a series of concentric
+						circles. To ensure a balanced and symmetric
+						visualization, it begins by finding the "center" of the
+						tree and designates it as the root.
+					</p>
+					<p>
+						The algorithm then determines the final position for
+						each node in two phases:
+					</p>
+					<ul>
+						<li>
+							<strong class="highlight"
+								>Bottom-Up Traversal</strong
+							>: It first traverses the tree to calculate the
+							"width" of each subtree, defined by its number of
+							leaves. This width determines the size of the
+							angular wedge each branch will occupy.
+						</li>
+						<li>
+							<strong class="highlight">Top-Down Traversal</strong
+							>: A second, top-down traversal places each node on
+							a circle corresponding to its depth from the root,
+							positioned angularly within its assigned wedge.
+						</li>
+					</ul>
+					<p>
+						This two-phase process guarantees a planar drawing with
+						no edge crossings.
+					</p>
+					<p>
+						Since calculating the final position of the current node
+						is done in constant time and every node is visited
+						exactly once in both traversals, the overall time
+						complexity of the algorithm is <code>O(N)</code>, where
+						<code>N</code> is the number of vertices in the tree.
+					</p>
+
+					<h3>Random Tree Generation</h3>
+					<p>
+						For generating a random tree, we first generate a random
+						Prufer sequence of length <code>N - 2</code>, where
+						<code>N</code> is the number of nodes. Every integer in
+						the sequence is chosen uniformly at random from the
+						range <code>[0, N - 1]</code>.
+					</p>
+
+					<p>
+						This sequence is then converted into a tree by
+						connecting nodes based on the values in the sequence.
+						Since the Prufer sequence is generated uniformly at
+						random and there is a bijection between Prufer sequences
+						and labelled trees, this method guarantees a uniform
+						distribution over all possible tree structures with
+						<code>N</code> nodes.
+					</p>
+
+					<p>
+						While generating the Prufer sequence is an
+						<code>O(N)</code> operation, converting it to a tree
+						involves <code>O(N^2)</code> operations, which is the
+						overall time complexity of this process.
+					</p>
+				</section>
+
+				<section>
+					<h2>Performance</h2>
+					<p>
+						Apart from the algorithms discussed above, there are two
+						other important processes from a performance
+						perspective:
+					</p>
+					<ul>
+						<li>
+							<strong class="highlight">Rendering</strong>: Each
+							frame iterates through all nodes and edges to draw
+							them, resulting in an <code>O(V+E)</code> operation,
+							which is <code>O(N)</code> for a tree.
+						</li>
+						<li>
+							<strong class="highlight">Animation</strong>: The
+							animation update loop in
+							<code>Animator::update</code> iterates over all
+							nodes, making it an <code>O(N)</code> operation per
+							frame.
+						</li>
+					</ul>
+					<p>
+						To measure performance, we look at these three values:
+					</p>
+					<ul>
+						<li>
+							<strong class="highlight"
+								>Time to first frame</strong
+							>: This is the time taken to finish drawing the
+							first frame and includes any prior initialisation
+							and setup (window creation, tree generation etc.)
+						</li>
+						<li>
+							<strong class="highlight">Draw time</strong>: This
+							is the (average) time taken by the
+							<code>renderer->draw(...)</code> call that draws the
+							actual tree.
+						</li>
+						<li>
+							<strong class="highlight"
+								>Tree generation time</strong
+							>: This is the (average) time taken by the random
+							tree generation algorithm.
+						</li>
+					</ul>
+
+					<p>
+						For different values of <code>N</code>, we get the
+						following results:
+					</p>
+					<table>
+						<thead>
+							<tr>
+								<th>N</th>
+								<th>Time to first frame (ms)</th>
+								<th>Draw time (ms)</th>
+								<th>Tree generation time (ms)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>10</td>
+								<td>333.957</td>
+								<td>0.496</td>
+								<td>0.024</td>
+							</tr>
+							<tr>
+								<td>20</td>
+								<td>335.955</td>
+								<td>0.752</td>
+								<td>0.031</td>
+							</tr>
+							<tr>
+								<td>50</td>
+								<td>337.753</td>
+								<td>1.623</td>
+								<td>0.052</td>
+							</tr>
+							<tr>
+								<td>100</td>
+								<td>343.572</td>
+								<td>3.218</td>
+								<td>0.167</td>
+							</tr>
+							<tr>
+								<td>500</td>
+								<td>347.376</td>
+								<td>9.445</td>
+								<td>1.387</td>
+							</tr>
+							<tr>
+								<td>1000</td>
+								<td>349.019</td>
+								<td>14.197</td>
+								<td>3.583</td>
+							</tr>
+							<tr>
+								<td>2000</td>
+								<td>380.475</td>
+								<td>24.287</td>
+								<td>9.091</td>
+							</tr>
+							<tr>
+								<td>5000</td>
+								<td>446.565</td>
+								<td>60.581</td>
+								<td>53.393</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<p>
+						As expected, the time to first frame remains relatively
+						constant since it is dominated by fixed overheads like
+						window creation and OpenGL initialisation. For example,
+						the initial <code>glutInit()</code> call itself takes
+						around ~70 ms on its own.
+					</p>
+
+					<p>
+						We can see that the tree generation time grows much
+						faster than the draw time, which is expected since the
+						former is O(N^2) while the latter is O(N), with both
+						becoming comparable for very large trees (5000 nodes).
+						From a user's perspective, both tree generation and
+						panning are very smooth for smaller trees, though tree
+						generation becomes slightly noticeable at
+						<code>N = 2000</code> and panning around starts lagging
+						a bit at <code>N = 5000</code>.
+					</p>
+				</section>
+
+				<section>
+					<h2>Issues and Coding Challenges</h2>
+					<ul>
+						<li>
+							<strong>Legacy OpenGL Pipeline Limitations:</strong>
+							<p>
+								The drawing functions in
+								<code>graphics.h</code> use immediate mode
+								OpenGL (e.g.,
+								<code>glBegin</code>/<code>glEnd</code>), which
+								is deprecated. This caused issues when trying to
+								attempt to use shaders for more aesthetic
+								effects (like glow around nodes), but shaders
+								are a core feature of modern OpenGL and are
+								incompatible with the legacy functions used in
+								this project.
+							</p>
+						</li>
+						<li>
+							<strong>Pseudocode Bugs:</strong>
+							<p>
+								While the description of the R1 algorithm in the
+								paper is clear, there were some ambiguities and
+								minor errors in the provided pseudocode.
+							</p>
+							<p>
+								For example, in the case of two centers, the
+								given pseudocode does two calls to
+								<code>drawSubTree</code> with angles
+								<code>(3π/2, π/2)</code> and
+								<code>(π/2, 3π/2)</code>. Since every node is
+								drawn at the point with radial part
+								<code>(α1 + α2) / 2</code>, both centers were
+								drawn at the same coordinates, leading the
+								entire tree drawing to become non-planar and
+								messy.
+							</p>
+							<p>
+								Reading through the description leads to the
+								conclusion that we need to draw at the point
+								between <code>α1</code> and
+								<code>α2</code> (when taken in anti-clockwise
+								order), which is not necessarily at
+								<code>(α1 + α2) / 2</code>. Replacing the first
+								function call with
+								<code>(-π/2, π/2)</code> fixes this issue,
+								leading to the first center being drawn at the
+								point with radial part 0.
+							</p>
+						</li>
+					</ul>
+				</section>
+			</main>
+		</div>
+	</body>
 </html>
