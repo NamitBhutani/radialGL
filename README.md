@@ -1,7 +1,5 @@
 # Interactive Free Tree Visualization
 
-> An interactive C++ application for visualizing free trees (undirected, acyclic graphs) using a radial layout algorithm. Built with modern C++, OpenGL, GLFW, and ImGui.
-
 This project allows users to generate, load, and manipulate tree structures in real-time. The core visualization uses a radial layout to arrange nodes in a visually appealing circular pattern, with smooth animations providing feedback for every change.
 
 ## Features
