@@ -11,6 +11,71 @@ struct Point
 
 namespace Drawing
 {
+    namespace
+    {
+        inline std::vector<Point> _generateCircleVertices(Point center, int radius)
+        {
+            std::vector<Point> vertices;
+            std::vector<Point> octant1_points;
+            int x = radius;
+            int y = 0;
+            int d = 1 - radius;
+
+            while (x >= y)
+            {
+                octant1_points.push_back({(float)x, (float)y});
+                y++;
+                if (d <= 0)
+                {
+                    d += 2 * y + 1;
+                }
+                else
+                {
+                    x--;
+                    d += 2 * (y - x) + 1;
+                }
+            }
+
+            vertices.reserve(octant1_points.size() * 8);
+
+            // use the points from the first octant to build all 8 octants in order
+            for (const auto &p : octant1_points)
+            {
+                vertices.push_back({center.x + p.x, center.y + p.y});
+            }
+            for (size_t i = octant1_points.size(); i-- > 0;)
+            {
+                vertices.push_back({center.x + octant1_points[i].y, center.y + octant1_points[i].x});
+            }
+            for (const auto &p : octant1_points)
+            {
+                vertices.push_back({center.x - p.y, center.y + p.x});
+            }
+            for (size_t i = octant1_points.size(); i-- > 0;)
+            {
+                vertices.push_back({center.x - octant1_points[i].x, center.y + octant1_points[i].y});
+            }
+            for (const auto &p : octant1_points)
+            {
+                vertices.push_back({center.x - p.x, center.y - p.y});
+            }
+            for (size_t i = octant1_points.size(); i-- > 0;)
+            {
+                vertices.push_back({center.x - octant1_points[i].y, center.y - octant1_points[i].x});
+            }
+            for (const auto &p : octant1_points)
+            {
+                vertices.push_back({center.x + p.y, center.y - p.x});
+            }
+            for (size_t i = octant1_points.size(); i-- > 0;)
+            {
+                vertices.push_back({center.x + octant1_points[i].x, center.y - octant1_points[i].y});
+            }
+
+            return vertices;
+        }
+    }
+
     inline void drawPixel(int x, int y)
     {
         glBegin(GL_POINTS);
@@ -24,7 +89,7 @@ namespace Drawing
         int x = radius;
         int y = 0;
         int d = 1 - x;
-
+        std::vector<Point> octant1_points;
         while (x >= y)
         {
             // only calculate one octant and then mirror it eight times
@@ -53,49 +118,21 @@ namespace Drawing
     // draws a solid, filled in circle
     inline void drawFilledCircle(Point center, int radius)
     {
-        int x = radius;
-        int y = 0;
-        int d = 1 - x;
+        // generate the vertices needed for this specific circle
+        std::vector<Point> vertices = _generateCircleVertices(center, radius);
 
-        while (x >= y)
+        glBegin(GL_TRIANGLE_FAN);
+        glVertex2f(center.x, center.y); // center point of the fan
+        for (const auto &vertex : vertices)
         {
-            // this is similar to the outline but we also fill the inside
-            drawPixel(center.x - x, center.y - y);
-            drawPixel(center.x + x, center.y - y);
-
-            drawPixel(center.x - x, center.y + y);
-            drawPixel(center.x + x, center.y + y);
-
-            drawPixel(center.x - y, center.y - x);
-            drawPixel(center.x + y, center.y - x);
-
-            drawPixel(center.x - y, center.y + x);
-            drawPixel(center.x + y, center.y + x);
-
-            // fill in the circle for pretty nodes
-            for (int tx = -x + 1; tx <= x - 1; tx++)
-            {
-                drawPixel(center.x + tx, center.y - y);
-                drawPixel(center.x + tx, center.y + y);
-            }
-
-            for (int ty = -y + 1; ty <= y - 1; ty++)
-            {
-                drawPixel(center.x + ty, center.y - x);
-                drawPixel(center.x + ty, center.y + x);
-            }
-
-            y++;
-            if (d <= 0)
-            {
-                d += 2 * y + 1;
-            }
-            else if (d > 0)
-            {
-                x--;
-                d -= 2 * x + 1;
-            }
+            glVertex2f(vertex.x, vertex.y);
         }
+        // add the first vertex again to close the fan
+        if (!vertices.empty())
+        {
+            glVertex2f(vertices.front().x, vertices.front().y);
+        }
+        glEnd();
     }
 
     // draws a line between two points using bresenham's algorithm
