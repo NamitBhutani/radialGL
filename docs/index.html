@@ -424,8 +424,9 @@
 						<code>graphics.h</code> contains the implementation of
 						midpoint algorithms for drawing lines and circles using
 						immediate mode OpenGL. It also has a variant for filled
-						circles, where we loop over and fill in all pixels
-						between two boundary pixels at the same y-coordinate.
+						circles, where we pre-generate all vertices of the circle using the
+						midpoint circle algorithm and then use <code>GL_TRIANGLE_FAN</code>
+						to render the filled circle efficiently.
 					</p>
 					<p>
 						<code>animate.h</code> defines the
